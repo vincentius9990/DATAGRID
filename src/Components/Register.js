@@ -20,39 +20,48 @@ const Register = () => {
     let navigate = useNavigate();
 
     const registerhandler = (e) => {
-        if (email === "" || password === "" || confirm === "") {
-            e.preventDefault();
-
+        e.preventDefault();
+      if (password === "" || confirm === "" || email === "") {
             swal({
-                title: "INVALID VALUES NOT ALLOWED!",
+                title: "BLANK VALUES NOT ALLOWED!",
                 icon: "error",
                 button: "OK",
             });
+        return false;
         }
-        if(password!=confirm){
-           e.preventDefault();
+/*if(password==="")
+{
+    swal({
+        title: "BLANK VALUES NOT ALLOWED!",
+        icon: "error",
+        button: "OK",
+    });
+}*/
+        if(password!==confirm){
             swal({
                 title: "BOTH PASSWORDS SHOULD MATCH",
                 icon: "error",
                 button: "OK",
-            });}
-        if(emailerr==false&&passworderr==false)
+            });
+       
+        return false;
+        }
+
+        if(emailerr===false&&passworderr===false&&email!==""&&password===confirm)
            { swal({
                 title: "REGISTRATION SUCCESSFULL",
                 icon: "success",
                 button: "OK",
           
-            });
-            axios.post("http://localhost:8000/register",{email:email,password:password});
+            }); console.log(email+password);
+            axios.post("http://127.0.0.1:8000/register",{email:email,password:password}).then((data)=>{console.log(data)}).catch((err)=>{console.log(err)})
             navigate("/");} 
+return true;
+    }
 
-    }
-    const back = () => {
-        navigate("/");
-    }
     const emailhandler = (e) => {
         let email = e.target.value.trim();
-        var regx = /^([a-zA-Z0-9\.-]+)@([a-zA-Z0-9\.-]+)$/
+        var regx = /^([a-zA-Z0-9\.-]+)@([a-zA-Z0-9\.-]+)\.([a-z]{2,8})(\.[a-z]{2,10})?$/
         if (regx.test(email)) {
             setemailerr(false);
             setemail(email);
@@ -87,14 +96,14 @@ const Register = () => {
         <>
             <form onSubmit={registerhandler} className="loginformstyle">
                 <strong>REGISTER</strong>
-                <Textfield type="email" onChange={emailhandler} label="Enter Email " InputProps={{
+                <Textfield type="email"  onChange={emailhandler} label="Enter Email " InputProps={{
                     startAdornment: (
                         <InputAdornment position="start">
                             <EmailIcon />
                         </InputAdornment>
                     ),
                 }} margin="dense" fullWidth={true} error={emailerr} /><br></br>{emailerr ? <h className="error">Invalid Email(@ compulsory)</h> : ""}<br />
-                <Textfield type="password" autoComplete="off" onChange={passhandler} label="Enter Password" margin="dense"
+                <Textfield type="password" autoComplete="off"  onChange={passhandler} label="Enter Password" margin="dense"
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
@@ -113,7 +122,7 @@ const Register = () => {
 
 
                 <Button variant="contained" type="submit">REGISTER</Button>
-                <Button variant="outlined" style={{ marginLeft: "10px" }} onClick={back}>BACK</Button>
+                <Button variant="outlined" onClick={()=>{navigate('/')}}style={{ marginLeft: "10px" }}>BACK</Button>
             </form>
 
 

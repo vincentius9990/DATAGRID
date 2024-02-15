@@ -1,4 +1,4 @@
-import Textfield from '@mui/material/Textfield';
+import TextField from '@mui/material/TextField';
 import EmailIcon from '@mui/icons-material/Email';
 import { Button } from '@mui/material';
 import PasswordIcon from '@mui/icons-material/Password';
@@ -13,14 +13,14 @@ const[emailerr,setemailerr]=useState(false);
 const[passworderr,setpassworderr]=useState(false);
 const[email,setemail]=useState("");
 const[arr,setarr]=useState("");
-const[nav,setnav]=useState(false);
 const[password,setpassword]=useState("");
 
 useEffect(()=>{
     axios.get("http://localhost:8000/login").then((data)=>{
    setarr(data.data);
+   console.log(data.data);
    })
-},[]);
+},[]);//axios.get returns promise
 
 const navigate=useNavigate();
 
@@ -28,21 +28,21 @@ const navigate=useNavigate();
     e.preventDefault();
    
    
-if(email===""&&password==="")
+if(emailerr===true || passworderr===true||email===null||password===null)
 {
-    e.preventDefault();
+    
  
     swal({
-        title: "BLANK VALUES NOT ALLOWED!",
+        title: "INCORRECT CREDENTIALS!",
         icon: "error",
         button: "OK",
       });
-      
+ return false;     
 }
-else{  
+
    arr.forEach((value)=>{
     if(value.email===email&&value.password===password)
-    {     setnav(true); 
+    {
         swal({
             title: "LOGIN SUCCESSFULL",
             icon: "success",
@@ -51,20 +51,23 @@ else{
       navigate("/grid");
         
     }
-    else{swal({
-        title: "INVALID CREDENTIALS",
-        icon: "error",
-        button: "OK"
-      }); }
-})
-  
- }  }    
+    else
+    {
+        swal({
+            title: "INCORRECT CREDENTIALS!",
+            icon: "error",
+            button: "OK",
+          });
+return false;
+    }
+   });
 
+}
 
 const emailhandler=(e)=>{
 let email=e.target.value.trim();
-var regx=/^([a-zA-Z0-9\.-]+)@([a-zA-Z0-9\.-]+)$/
-if(regx.test(email))
+var regx=/^([a-zA-Z0-9\.-]+)@([a-zA-Z0-9\.-]+)\.([a-z]{2,8})(\.[a-z]{2,10})?$/
+if(regx.test(email))//regx.test return 1 for valid email otherwise returns 0
 {
 setemailerr(false)  ;
 setemail(email);
@@ -80,8 +83,8 @@ setemailerr(true);
 
 const passhandler=(e)=>{
 const pass=e.target.value.trim();
-var regx=/[^ ]/
-if(regx.test(pass)&&pass.length>=4&&pass.length<=10){
+var regx=/[^ ][a-zA-Z0-9]{3}/
+if(regx.test(pass)&&pass.length<=10){
     setpassworderr(false);
     setpassword(pass);
 }
@@ -96,14 +99,19 @@ const r=()=>{
         <>
             <form onSubmit={loginhandler} className="loginformstyle">
             <strong>LOGIN</strong> 
-                <Textfield type="email" error={emailerr} onChange={emailhandler} label="Enter Email " InputProps={{
-                    startAdornment: (
-                        <InputAdornment position="start">
-                            <EmailIcon />
-                        </InputAdornment>
-                    ),
-                }}   margin="dense" fullWidth={true} /><br></br>{emailerr?<h className="error">Invalid Email(@ compulsory)</h>:""}<br/>
-                <Textfield type="password" n autoComplete="off"  onChange={passhandler}label="Enter Password" margin="dense" 
+            <br></br>
+                <TextField variant="outlined"  margin="dense" label="Enter email" onChange={emailhandler} fullWidth={true}
+                 InputProps={{
+            startAdornment: <InputAdornment position="start"><EmailIcon/></InputAdornment>,
+          }}
+                error={emailerr}    
+                
+                ></TextField>
+
+            <br/>
+            {emailerr?<h className="error">Invalid Email(@ compulsory)</h>:""}
+               <br/>
+                <TextField type="password" n autoComplete="off"  onChange={passhandler}label="Enter Password" margin="dense" 
                 InputProps={{
                     startAdornment: (
                         <InputAdornment position="start">
@@ -117,6 +125,6 @@ const r=()=>{
         </>
 
     )
+            }
 
-}
 export default Login;

@@ -6,6 +6,7 @@ import Register from './Components/Register';
 import { BrowserRouter,Routes,Route } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
 import Grid from './Components/Grid';
+import DataGridDemo from './Components/DataGridDemo';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -14,6 +15,7 @@ root.render(
 <Route exact path="/" element={<Login/>}/>
 <Route exact path="/register" element={<Register/>}/>
 <Route exact path="/grid" element={<Grid/>}/>
+<Route exact path="/gridtest" element={<DataGridDemo/>}/>
  </Routes>
  </BrowserRouter>
  
